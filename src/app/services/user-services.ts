@@ -4,18 +4,25 @@ import { combineLatest, Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { User } from '../models/user';
 import { take } from 'rxjs/operators';
-import { Post } from '../models/post';
-import { Comment } from '../models/post';
 import { IRootReducerState } from '../store/state/app-state';
+import { getSelectedUser, getUsers } from '../store/selector/user-selector';
 import {
+  getError,
   getLoaded,
   getLoading,
-  getUsers,
-} from '../store/selector/user-selector';
+} from '../store/selector/app-configuration-selector';
 import {
-  UserListRequestAction,
-  UserListSuccessAction,
+  GetUsersAction,
+  GetUserByIdAction,
 } from '../store/actions/user-action';
+import {
+  APP_REQUEST_ERROR,
+  APP_REQUEST_LOADING,
+  APP_REQUEST_LOADED,
+  AppRequestLoading,
+  AppRequestLoaded,
+  AppRequestError,
+} from '../store/actions/app-configuration-action';
 
 @Injectable()
 export class UserService {
@@ -24,23 +31,34 @@ export class UserService {
     private store: Store<IRootReducerState>
   ) {}
 
-  getUserList(force = false): [Observable<boolean>, Observable<User[]>] {
+  getUserList(
+    force = false
+  ): [Observable<boolean>, Observable<User[]>, Observable<string>] {
     const loading$ = this.store.select(getLoading);
     const loaded$ = this.store.select(getLoaded);
+    const error$ = this.store.select(getError);
     const getUserData$ = this.store.select(getUsers);
 
     combineLatest([loaded$, loading$])
       .pipe(take(1))
       .subscribe((data) => {
         if ((!data[0] && !data[1]) || force) {
-          this.store.dispatch(new UserListRequestAction());
-          this.apiService.getAllUser().subscribe((response) => {
-            this.store.dispatch(new UserListSuccessAction({ data: response }));
+          this.store.dispatch(new AppRequestLoading());
+          this.apiService.getAllUser().subscribe({
+            next: (response) => {
+              this.store.dispatch(new GetUsersAction({ data: response }));
+            },
+            error: (e) => {
+              this.store.dispatch(new AppRequestError({ error: e }));
+            },
+            complete: () => {
+              this.store.dispatch(new AppRequestLoaded());
+            },
           });
         }
       });
 
-    return [loading$, getUserData$];
+    return [loading$, getUserData$, error$];
   }
 
   deleteUser(id: number) {
@@ -55,8 +73,33 @@ export class UserService {
     // first call api to add a user and then update it in store
   }
 
-  getUserById(id: number) {
-    // get user from reducer if exist otherwise from api
-    return this.apiService.getUser(id);
+  getUserById(
+    Id: number,
+    force = false
+  ): [Observable<boolean>, Observable<User>, Observable<string>] {
+    const loading$ = this.store.select(getLoading);
+    const error$ = this.store.select(getError);
+    const user$ = this.store.select(getSelectedUser);
+
+    user$.pipe(take(1)).subscribe((res) => {
+      const isUserInStore = res?.id == Id;
+      if (force || !isUserInStore) {
+        this.store.dispatch(new AppRequestLoading());
+        this.apiService.getUser(Id).subscribe({
+          next: (response) => {
+            this.store.dispatch(new GetUserByIdAction({ data: response }));
+          },
+          error: (e) => {
+            this.store.dispatch(new AppRequestError({ error: e }));
+          },
+          complete: () => {
+            this.store.dispatch(new AppRequestLoaded());
+          },
+        });
+      }
+      return res;
+    });
+
+    return [loading$, user$, error$];
   }
 }

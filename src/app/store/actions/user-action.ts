@@ -1,16 +1,11 @@
 import { Action } from '@ngrx/store';
 import { User } from 'src/app/models/user';
 
-export const USER_LIST_REQUEST = 'user list request';
-export const USER_LIST_SUCCESS = 'user list success';
+export const GET_USER = 'GET_USER';
+export const GET_USERS = 'GET_USERS';
 export const USER_DELETE = 'user delete';
 export const USER_UPDATE = 'user update';
 export const USER_ADD = 'user add';
-export const USER_LIST_ERROR = 'user list error';
-
-export class UserListRequestAction implements Action {
-  readonly type = USER_LIST_REQUEST;
-}
 
 export class UserDeleteAction implements Action {
   readonly type = USER_DELETE;
@@ -30,12 +25,14 @@ export class UserAddAction implements Action {
   constructor(public payload: { data: User }) {}
 }
 
-export class UserListErrorAction implements Action {
-  readonly type = USER_LIST_ERROR;
+export class GetUserByIdAction implements Action {
+  readonly type = GET_USER;
+
+  constructor(public payload: { data: User }) {}
 }
 
-export class UserListSuccessAction implements Action {
-  readonly type = USER_LIST_SUCCESS;
+export class GetUsersAction implements Action {
+  readonly type = GET_USERS;
 
   constructor(public payload: { data: User[] }) {}
 }

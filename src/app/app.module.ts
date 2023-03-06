@@ -22,6 +22,7 @@ import { FlexLayoutModule, FlexModule } from '@angular/flex-layout';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { rootReducer } from './store/reducers';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ViewUserComponent } from './pages/user/view-user.componenet';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     UsersComponent,
     UserCardComponent,
     UserListComponent,
+    ViewUserComponent,
   ],
   imports: [
     BrowserModule,

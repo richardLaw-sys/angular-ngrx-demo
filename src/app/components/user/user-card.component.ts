@@ -16,6 +16,7 @@ import { UserService } from 'src/app/services/user-services';
     >
       <mat-card-title>{{ this.user?.name }}</mat-card-title>
       <mat-card-content>{{ this.user?.email }}</mat-card-content>
+      <button mat-raised-button color="warn">View</button>
       <button (click)="delete()" mat-raised-button color="warn">Delete</button>
       <button (click)="update()" mat-raised-button color="primary">
         Update
@@ -37,5 +38,7 @@ export class UserCardComponent {
 
   update() {}
 
-  open() {}
+  open() {
+    this.router.navigate(['user', this.user?.id]);
+  }
 }

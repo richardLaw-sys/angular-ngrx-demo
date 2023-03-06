@@ -1,16 +1,24 @@
 import {
-  UserListRequestAction,
+  AppRequestLoading,
+  AppRequestLoaded,
+  AppRequestError,
+} from './app-configuration-action';
+import {
   UserUpdateAction,
   UserDeleteAction,
   UserAddAction,
-  UserListErrorAction,
-  UserListSuccessAction,
+  GetUserByIdAction,
+  GetUsersAction,
 } from './user-action';
 
 export type UserAction =
-  | UserListRequestAction
+  | GetUserByIdAction
+  | GetUsersAction
   | UserUpdateAction
   | UserDeleteAction
-  | UserAddAction
-  | UserListErrorAction
-  | UserListSuccessAction;
+  | UserAddAction;
+
+export type AppConfigAction =
+  | AppRequestLoading
+  | AppRequestLoaded
+  | AppRequestError;

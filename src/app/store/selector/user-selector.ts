@@ -4,17 +4,12 @@ import { IUserReducerState } from '../state/user-state';
 
 const usersState = (state: IRootReducerState) => state.usersState;
 
-export const getLoading = createSelector(
-  usersState,
-  (state: IUserReducerState) => state.loading
-);
-
-export const getLoaded = createSelector(
-  usersState,
-  (state: IUserReducerState) => state.loaded
-);
-
 export const getUsers = createSelector(
   usersState,
   (state: IUserReducerState) => state.users
+);
+
+export const getSelectedUser = createSelector(
+  usersState,
+  (state: IUserReducerState) => state.selectedUser
 );
