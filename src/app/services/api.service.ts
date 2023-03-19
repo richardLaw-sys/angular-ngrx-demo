@@ -7,15 +7,20 @@ import { Post } from '../models/post';
 
 @Injectable()
 export class ApiService {
+  private baseUrl = 'http://localhost:3000';
+  private apiBaseUrl = 'https://localhost:5001/api';
+
   constructor(private httpService: HttpService) {}
 
   getAllUser(): Observable<User[]> {
-    return this.httpService.get('/users').pipe(map((data) => data as User[]));
+    return this.httpService
+      .get(`${this.baseUrl}/users`)
+      .pipe(map((data) => data as User[]));
   }
 
   getUser(id: number): Observable<User> {
     return this.httpService
-      .get('/users/' + id)
+      .get(`${this.baseUrl}/users/` + id)
       .pipe(map((data) => data as User));
   }
 
@@ -41,5 +46,17 @@ export class ApiService {
     return new Observable((observer) => {
       observer.next(data);
     });
+  }
+
+  getUserFromApi(): Observable<User> {
+    return this.httpService
+      .get(`${this.apiBaseUrl}/auth/user`)
+      .pipe(map((data) => data as User));
+  }
+
+  getUserFromGraphApi(): Observable<User> {
+    return this.httpService
+      .get(`${this.apiBaseUrl}/graphapi`)
+      .pipe(map((data) => data as User));
   }
 }

@@ -1,10 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  template: ` <router-outlet></router-outlet> `,
+  template: ` <router-outlet *ngIf="!isIframe"></router-outlet>`,
   styles: [``],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Angular-NgRx';
+  isIframe = false;
+
+  ngOnInit() {
+    this.isIframe = window !== window.parent && !window.opener;
+  }
 }
